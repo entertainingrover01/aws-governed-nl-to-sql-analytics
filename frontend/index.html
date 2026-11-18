@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Governed NL-to-SQL Analytics Demo</title>
+  <style>
+    :root { --bg: #f7f5f0; --card: #ffffff; --ink: #1f2937; --muted: #6b7280;
+            --accent: #c2410c; --green: #15803d; --green-bg: #f0fdf4;
+            --red: #b91c1c; --red-bg: #fef2f2; --border: #e5e7eb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+           background: var(--bg); color: var(--ink); }
+    main { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+    .subtitle { color: var(--muted); margin: 0 0 1.5rem; }
+    .card { background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    textarea { width: 100%; min-height: 64px; padding: 0.6rem; font-size: 1rem;
+               border: 1px solid var(--border); border-radius: 6px; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    button { cursor: pointer; border: 1px solid var(--border); background: #fff;
+             border-radius: 999px; padding: 0.45rem 0.9rem; font-size: 0.9rem; }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent);
+                     font-weight: 600; padding: 0.6rem 1.4rem; border-radius: 6px; }
+    button:disabled { opacity: 0.6; cursor: default; }
+    .sample-label { color: var(--muted); font-size: 0.85rem; margin: 1rem 0 0.25rem; }
+    pre { background: #111827; color: #e5e7eb; padding: 0.9rem; border-radius: 6px;
+          overflow-x: auto; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; }
+    .verdict { font-weight: 700; padding: 0.4rem 0.7rem; border-radius: 6px;
+               display: inline-block; }
+    .verdict.allowed { background: var(--green-bg); color: var(--green); }
+    .verdict.blocked { background: var(--red-bg); color: var(--red); }
+    .verdict.error { background: var(--red-bg); color: var(--red); }
+    .reason { color: var(--muted); margin: 0.5rem 0 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+    th, td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border); }
+    th { background: #f9fafb; }
+    .empty { color: var(--muted); }
+    .hidden { display: none; }
+    .meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+    footer { color: var(--muted); font-size: 0.85rem; margin-top: 2rem; }
+    footer a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Governed NL-to-SQL Analytics</h1>
+    <p class="subtitle">
+      Ask a question about the retail dataset in plain English. A Bedrock model
+      turns it into SQL, a deterministic guardrail layer validates it, and every
+      query is written to an audit log before results come back.
+    </p>
+
+    <section class="card">
+      <label for="question">Your question</label>
+      <textarea id="question" placeholder="e.g. What are the top 5 products by total sales revenue?"></textarea>
+      <div class="row">
+        <button id="askBtn" class="primary">Ask</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+      <p class="sample-label">Try one of these:</p>
+      <div class="row" id="samples"></div>
+    </section>
+
+    <section class="card hidden" id="sqlCard">
+      <h2>Generated SQL</h2>
+      <pre id="sqlOut"></pre>
+    </section>
+
+    <section class="card hidden" id="verdictCard">
+      <h2>Guardrail verdict</h2>
+      <span id="verdictBadge" class="verdict"></span>
+      <p id="verdictReason" class="reason"></p>
+    </section>
+
+    <section class="card hidden" id="resultsCard">
+      <h2>Results</h2>
+      <div id="resultsOut"></div>
+      <p id="resultsMeta" class="meta"></p>
+    </section>
+
+    <footer>
+      Read-only by design: the guardrails allow SELECT only, the database user
+      has SELECT privileges only, and every query runs in a read-only
+      transaction. Source and architecture:
+      <a href="https://github.com/entertainingrover01/aws-governed-nl-to-sql-analytics">aws-governed-nl-to-sql-analytics</a>.
+    </footer>
+  </main>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

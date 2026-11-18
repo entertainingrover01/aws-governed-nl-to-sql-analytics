@@ -1,0 +1,3 @@
+# Copy to terraform.tfvars and fill in a strong password.
+# terraform.tfvars is gitignored — never commit real credentials.
+db_password = "CHANGE-ME-strong-password"
